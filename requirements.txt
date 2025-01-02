@@ -1,0 +1,7 @@
+fiona
+shapely
+geopandas
+folium
+beautifulsoup4
+pyproj
+numpy
