@@ -37,42 +37,42 @@ pip install -r requirements.txt
 
 ### 1. Extract ZIP/KMZ Files
 ```python
-from geo_script import unzip_file
+from geo_scripts import unzip_file
 
 unzip_file('path/to/your.zip', 'output/directory')
 ```
 
 ### 2. Convert KMZ to KML
 ```python
-from your_script import convert_kmz_to_kml
+from geo_scripts import convert_kmz_to_kml
 
 kml_path = convert_kmz_to_kml('path/to/your.kmz')
 ```
 
 ### 3. Read KML into GeoDataFrame
 ```python
-from your_script import read_kml
+from geo_scripts import read_kml
 
 gdf, features = read_kml('path/to/your.kml')
 ```
 
 ### 4. Generate HTML Maps
 ```python
-from your_script import generate_html_map
+from geo_scripts import generate_html_map
 
 generate_html_map(gdf, 'output/maps', start_index=0, end_index=10)
 ```
 
 ### 5. Calculate Polygon Area
 ```python
-from your_script import calculate_polygon_area
+from geo_scripts import calculate_polygon_area
 
 areas_gdf = calculate_polygon_area('path/to/your.kml')
 ```
 
 ### 6. Add Attribute to GeoJSON
 ```python
-from your_script import add_attribute_to_geojson
+from geo_scripts import add_attribute_to_geojson
 
 add_attribute_to_geojson('input.geojson', 'new_key', 'new_value', 'output.geojson')
 ```
