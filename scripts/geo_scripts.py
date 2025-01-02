@@ -113,3 +113,63 @@ def add_attribute_to_geojson(geojson_file, attribute_key, attribute_value, outpu
     gdf = gpd.read_file(geojson_file)
     gdf[attribute_key] = attribute_value
     gdf.to_file(output_file, driver='GeoJSON')
+
+def generate_html_map(gdf, output_folder, start_index=0, end_index=None):
+    """
+    Generates HTML maps for polygons in a GeoDataFrame.
+
+    Parameters:
+        gdf (GeoDataFrame): Input GeoDataFrame with geometries.
+        output_folder (str): Folder to save the HTML files.
+        start_index (int): Starting index of polygons to process.
+        end_index (int): Ending index of polygons to process.
+
+    Returns:
+        None
+    """
+    os.makedirs(output_folder, exist_ok=True)
+
+    end_index = end_index or gdf.shape[0]
+
+    for i in range(start_index, end_index):
+        gdff = gdf.iloc[i]
+        polygon = gdff.geometry
+        name = gdff.get("Name", f"Polygon_{i}")
+        HA = gdff.get("ha", "Unknown")
+        desc = gdff.get("Description", "")
+
+        if len(str(desc)) < 15:
+            desc = ""
+
+        lon, lat = list(polygon.centroid.coords)[0]
+
+        # Create a map centered on the location of the polygon
+        m = folium.Map(location=[lat, lon], zoom_start=18)
+
+        # Add ESRI World Imagery basemap
+        esri_world_imagery = folium.TileLayer(
+            tiles='https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+            attr='ESRI World Imagery',
+            name='ESRI World Imagery',
+            overlay=False,
+            control=True
+        )
+        esri_world_imagery.add_to(m)
+
+        # Add polygon to the map
+        folium.GeoJson(polygon).add_to(m)
+
+        # Add a title to the map
+        title_html = f'''
+            <h3 align="center" style="font-size:20px"><b>Polygon {i+1} |{desc}| {name} - {HA} HA</b></h3>
+        '''
+        m.get_root().html.add_child(folium.Element(title_html))
+
+        # Add layer control
+        folium.LayerControl().add_to(m)
+
+        # Save the map as an HTML file
+        map_file = os.path.join(output_folder, f"{name}.html")
+        m.save(map_file)
+
+        print(f"Generated map for Polygon {i+1}: {name} ({HA} HA)")
