@@ -42,6 +42,14 @@ from geo_scripts import unzip_file
 unzip_file('path/to/your.zip', 'output/directory')
 ```
 
+or
+
+```python
+from geo_scripts import unzip_file
+
+unzip_file('path/to/your.kmz', 'output/directory')
+```
+
 ### 2. Convert KMZ to KML
 ```python
 from geo_scripts import convert_kmz_to_kml
