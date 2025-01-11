@@ -115,4 +115,4 @@ This project uses open-source libraries and tools, including:
 
 ## Contact
 
-For questions or feedback, please reach out to the repository owner at [jpaul@hitthecodelabs.com].
+For questions or feedback, please reach out to the repository owner.
