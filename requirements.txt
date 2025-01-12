@@ -5,3 +5,4 @@ folium
 beautifulsoup4
 pyproj
 numpy
+osmnx
