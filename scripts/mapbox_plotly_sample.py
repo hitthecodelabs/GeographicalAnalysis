@@ -39,8 +39,12 @@ fig.add_trace(
     go.Scattermapbox(
         lat=polygon_data["lat"],
         lon=polygon_data["lon"],
-        mode="lines",  # Draw as lines
-        line=dict(width=2, color="red"),  # Line style
+        # mode="lines+markers+text",
+        # line=dict(width=2, color="red"),
+        marker=dict(size=4, color="red"),
+        text=[f"Point {i}" for i in range(nn)],  # Labels for the points
+        fill="toself",  # Fill the polygon
+        fillcolor="rgba(255, 0, 0, 0.3)",  # Color with transparency
         name="Deforestation Polygon"
     )
 )
@@ -51,7 +55,7 @@ fig.update_layout(
         accesstoken=mapbox_token,
         style="satellite",  # Custom Style URL
         center=center_coordinates,
-        zoom=16.5
+        zoom=17.0
     ),
     # title="Deforestation Polygon",
     title=f"Polygon",
