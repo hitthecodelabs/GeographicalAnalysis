@@ -27,6 +27,9 @@ def extract_coords(geometry):
         coords = []  # Handle unsupported geometries gracefully
     return coords
 
+gdf = gpd.read_file("Centros Comerciales.kml")
+gdf.head()
+
 # Extract coordinates and convert to Web Mercator
 gdf["xs"] = gdf.geometry.apply(
     lambda geom: [latlon_to_web_mercator(lat, lon)[0] for lon, lat in extract_coords(geom)]
