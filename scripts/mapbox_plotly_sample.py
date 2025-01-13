@@ -56,7 +56,8 @@ fig.update_layout(
     # title="Deforestation Polygon",
     title=f"Polygon",
     width=1250,  # Set the width of the figure
-    height=715   # Set the height of the figure
+    height=715,   # Set the height of the figure
+    margin=dict(l=0, r=0, t=0, b=0)  # Remove margins
 )
 
 # Save as PNG
