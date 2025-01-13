@@ -2,6 +2,7 @@ import os
 import fiona
 import shutil
 import pyproj
+import folium
 
 import zipfile
 import numpy as np
