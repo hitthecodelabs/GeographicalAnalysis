@@ -27,6 +27,7 @@ def extract_coords(geometry):
         coords = []  # Handle unsupported geometries gracefully
     return coords
 
+# Load GeoPandas DataFrame
 gdf = gpd.read_file("Centros Comerciales.kml")
 gdf.head()
 
@@ -45,28 +46,42 @@ source = ColumnDataSource({
     "name": gdf["Name"],  # Add additional columns if needed
 })
 
+# Center of the map
 lat = -2.1409155511014633
 lon = -79.90951320936493
 
 # Convert lat/lon to Web Mercator coordinates
 center_x, center_y = latlon_to_web_mercator(lat, lon)
 
-# Define the map with centered coordinates
+# Define zoom level
+zoom_level = 16  # Higher zoom level = closer view
+tile_size = 256  # Tile size for Web Mercator
+earth_circumference = 40075016.686  # Earth's circumference in meters
+initial_resolution = earth_circumference / tile_size  # Resolution at zoom level 0
+resolution = initial_resolution / (2 ** zoom_level)  # Resolution at the desired zoom level
+
+# Calculate x_range and y_range based on zoom level
+range_size = resolution * tile_size  # Size of the range in meters
+x_range = (center_x - range_size / 2, center_x + range_size / 2)
+y_range = (center_y - range_size / 2, center_y + range_size / 2)
+
+# Define the map with centered coordinates and zoom level
 p = figure(
-    x_range=(center_x - 50000, center_x + 50000),  # Adjust the range for zoom level
-    y_range=(center_y - 50000, center_y + 50000),  # Adjust the range for zoom level
+    x_range=x_range,
+    y_range=y_range,
     x_axis_type="mercator",
     y_axis_type="mercator",
-    title="Map with GeoPandas Data"
+    title=f"Map with GeoPandas Data (Zoom Level {zoom_level})"
 )
 
-tile_provider = get_provider(Vendors.CARTODBPOSITRON)
+tile_provider = get_provider(Vendors.ESRI_IMAGERY)  # Using ESRI Satellite Imagery
 p.add_tile(tile_provider)
 
 # Plot polygons
 p.patches(xs="xs", ys="ys", source=source, fill_alpha=0.5, line_width=1, color="blue")
 
-output_file("map_debug5.html")
+n = 7
+output_file(f"map_debug{n}.html")
 
 # Show the map
 show(p)
