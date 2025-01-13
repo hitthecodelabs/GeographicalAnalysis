@@ -41,7 +41,6 @@ def convert_kmz_to_kml(kmz_file_path):
 
     raise ValueError("No KML file found inside the KMZ.")
 
-
 def read_kml(file_path):
     """
     Reads a KML file into a GeoDataFrame.
@@ -63,7 +62,6 @@ def read_kml(file_path):
 
     return gdf, features
 
-
 def validate_coordinates(coord_list):
     """
     Validates and classifies coordinates as Decimal Degrees (DD) or UTM.
@@ -78,7 +76,6 @@ def validate_coordinates(coord_list):
             results.append((lat, lon, 'Unknown'))
     return results
 
-
 def calculate_area_hectares(geometry):
     """
     Calculates the area of a geometry in hectares.
@@ -90,7 +87,6 @@ def calculate_area_hectares(geometry):
     area_sq_meters = polygon.area
     return area_sq_meters / 1e4
 
-
 def calculate_polygon_area(file_path):
     """
     Reads a KML or KMZ file, calculates polygon areas in hectares, and returns a GeoDataFrame.
@@ -99,13 +95,11 @@ def calculate_polygon_area(file_path):
     gdf["area_ha"] = gdf.geometry.apply(calculate_area_hectares)
     return gdf
 
-
 def string_similarity(a, b):
     """
     Calculates similarity ratio between two strings.
     """
     return SequenceMatcher(None, a, b).ratio()
-
 
 def add_attribute_to_geojson(geojson_file, attribute_key, attribute_value, output_file):
     """
