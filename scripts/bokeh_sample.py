@@ -74,7 +74,8 @@ p = figure(
     title=f"Map with GeoPandas Data (Zoom Level {zoom_level})"
 )
 
-tile_provider = get_provider(Vendors.ESRI_IMAGERY)  # Using ESRI Satellite Imagery
+# tile_provider = get_provider(Vendors.ESRI_IMAGERY)  # Using ESRI Satellite Imagery
+tile_provider = get_provider(Vendors.OSM)  # Using Open Street Maps contributors
 p.add_tile(tile_provider)
 
 # Plot polygons
