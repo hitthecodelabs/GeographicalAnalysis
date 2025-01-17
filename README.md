@@ -1,5 +1,7 @@
 # Geographical Analysis
 
+![Map](./images/coropletic_map_barcelona.png)
+
 ## Overview
 This repository contains a collection of Python scripts designed for geographical data analysis and visualization. These tools provide functionalities for processing KML/KMZ files, calculating polygon areas, generating HTML maps, and more.
 
