@@ -33,7 +33,7 @@ Clone the repository and install the required dependencies:
 
 ```bash
 git clone https://github.com/hitthecodelabs/GeographicalAnalysis.git
-cd Geographical-Analysis-Scripts
+cd GeographicalAnalysis
 pip install -r requirements.txt
 ```
 
