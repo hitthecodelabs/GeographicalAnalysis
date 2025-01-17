@@ -9,3 +9,4 @@ osmnx
 mapclassify
 networkx
 pydeck
+kaleido
