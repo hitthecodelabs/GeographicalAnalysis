@@ -1,5 +1,7 @@
 # Geographical Analysis
 
+![Map](./images/stad.png)
+
 ![Map](./images/map_polygon_satellite_view.png)
 
 ![Map](./images/coropletic_map_barcelona.png)
