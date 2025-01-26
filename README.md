@@ -1,4 +1,4 @@
-# Geographical Analysis
+# Geospatial Data Analysis
 
 ![Map](./images/stad.png)
 
