@@ -36,7 +36,7 @@ This repository contains a collection of Python scripts designed for geographica
 Clone the repository and install the required dependencies:
 
 ```bash
-git clone https://github.com/hitthecodelabs/GeographicalAnalysis.git
+git clone https://github.com/hitthecodelabs/Geospatial-Data-Analysis.git
 cd GeographicalAnalysis
 pip install -r requirements.txt
 ```
