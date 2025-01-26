@@ -1,5 +1,7 @@
 # Geospatial Data Analysis
 
+![Map](./images/chimborazo_elevation_map.png)
+
 ![Map](./images/stad.png)
 
 ![Map](./images/map_polygon_satellite_view.png)
