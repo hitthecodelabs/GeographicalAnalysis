@@ -5,6 +5,25 @@ from glob import glob
 from fastkml import kml
 from shapely.geometry import mapping
 
+def geojson_2_kml(input_geojson, output_kml):
+    """
+    Converts a GeoJSON file into a KML file using GeoPandas.
+
+    Parameters:
+    input_geojson (str): Path to the input GeoJSON file.
+    output_kml (str): Path to the output KML file where the converted data will be saved.
+
+    This function reads a GeoJSON file using GeoPandas and saves it as a KML file,
+    leveraging GeoPandas' built-in support for KML format.
+    """
+    # Load the GeoJSON file into a GeoDataFrame
+    gdf = gpd.read_file(input_geojson)
+    
+    # Save as KML file
+    gdf.to_file(output_kml, driver="KML")
+    
+    print(f"KML file saved: {output_kml}")
+
 def geojson_to_kml(input_geojson, output_kml):
     """
     Converts a GeoJSON file into a KML file.
