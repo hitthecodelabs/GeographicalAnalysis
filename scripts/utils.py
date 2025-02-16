@@ -4,6 +4,7 @@ import geopandas as gpd
 from glob import glob
 from fastkml import kml
 from shapely.geometry import mapping
+from shapely.geometry import Polygon, MultiPolygon
 
 def geojson_2_kml(input_geojson, output_kml):
     """
@@ -57,3 +58,25 @@ def geojson_to_kml(input_geojson, output_kml):
         f.write(k.to_string(prettyprint=True))
     
     print(f"KML file saved: {output_kml}")
+
+def filter_polygons(gdf, threshold=83):
+    """
+    Filters polygons where any coordinate (latitude or longitude) is equal to or less than the given threshold.
+
+    Parameters:
+    gdf (GeoDataFrame): GeoDataFrame containing geometries.
+    threshold (float): The threshold value to filter coordinates.
+
+    Returns:
+    GeoDataFrame: Filtered GeoDataFrame.
+    """
+    def check_polygon(geom):
+        """Check if any coordinate in the polygon meets the threshold condition."""
+        if isinstance(geom, (Polygon, MultiPolygon)):
+            for polygon in geom.geoms if isinstance(geom, MultiPolygon) else [geom]:
+                for x, y, *_ in polygon.exterior.coords:
+                    if x <= threshold or y <= threshold:  # Check both lat and lon
+                        return False
+        return True
+
+    return gdf[gdf['geometry'].apply(check_polygon)]
