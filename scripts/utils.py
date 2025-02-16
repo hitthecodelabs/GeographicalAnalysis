@@ -59,24 +59,22 @@ def geojson_to_kml(input_geojson, output_kml):
     
     print(f"KML file saved: {output_kml}")
 
-def filter_polygons(gdf, threshold=83):
+def filter_polygons(gdf, lon_threshold=-82):
     """
-    Filters polygons where any coordinate (latitude or longitude) is equal to or less than the given threshold.
+    Filters polygons where the longitude is greater than or equal to a given threshold.
 
     Parameters:
     gdf (GeoDataFrame): GeoDataFrame containing geometries.
-    threshold (float): The threshold value to filter coordinates.
+    lon_threshold (float): The minimum longitude value to keep polygons.
 
     Returns:
     GeoDataFrame: Filtered GeoDataFrame.
     """
-    def check_polygon(geom):
-        """Check if any coordinate in the polygon meets the threshold condition."""
+    def filter_by_longitude(geom):
+        """Checks if a geometry meets the longitude threshold."""
         if isinstance(geom, (Polygon, MultiPolygon)):
             for polygon in geom.geoms if isinstance(geom, MultiPolygon) else [geom]:
                 for x, y, *_ in polygon.exterior.coords:
-                    if x <= threshold or y <= threshold:  # Check both lat and lon
-                        return False
-        return True
-
-    return gdf[gdf['geometry'].apply(check_polygon)]
+                    if x >= lon_threshold:
+                        return True
+        return False
