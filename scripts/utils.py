@@ -6,6 +6,30 @@ from fastkml import kml
 from shapely.geometry import mapping
 from shapely.geometry import Polygon, MultiPolygon
 
+def display_directory_structure(root_dir, indent=""):
+    """
+    Recursively generates and prints a formatted directory structure.
+
+    Parameters:
+    root_dir (str): The root directory to scan.
+    indent (str): The indentation level for formatting.
+    """
+    print(f"\n{root_dir}")
+    
+    def get_structure(dir_path, current_indent):
+        try:
+            items = sorted(os.listdir(dir_path))
+            for index, item in enumerate(items):
+                item_path = os.path.join(dir_path, item)
+                prefix = "├── " if index < len(items) - 1 else "└── "
+                print(f"{current_indent}{prefix}{item}")
+                if os.path.isdir(item_path) and "site-packages" not in item_path:
+                    get_structure(item_path, current_indent + "│   " if index < len(items) - 1 else current_indent + "    ")
+        except PermissionError:
+            print(f"{current_indent}└── [Permission Denied]")
+
+    get_structure(root_dir, indent)
+
 def geojson_2_kml(input_geojson, output_kml):
     """
     Converts a GeoJSON file into a KML file using GeoPandas.
