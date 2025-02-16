@@ -78,3 +78,26 @@ def filter_polygons(gdf, lon_threshold=-82):
                     if x >= lon_threshold:
                         return True
         return False
+
+def gdf_to_kml(gdf, output_kml):
+    """
+    Converts a GeoDataFrame into a KML file using the fastkml library.
+
+    Parameters:
+    gdf (GeoDataFrame): GeoDataFrame containing geometries.
+    output_kml (str): Path to the output KML file where the converted data will be saved.
+    """
+    k = kml.KML()
+    doc = kml.Document()
+    k.append(doc)
+    
+    for _, row in gdf.iterrows():
+        placemark = kml.Placemark()
+        placemark.geometry = row.geometry
+        placemark.name = row.get('name', 'Unnamed')
+        doc.append(placemark)
+    
+    with open(output_kml, 'w', encoding='utf-8') as f:
+        f.write(k.to_string(prettyprint=True))
+    
+    print(f"KML file saved: {output_kml}")
