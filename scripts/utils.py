@@ -2,6 +2,9 @@ import os
 import time
 import geopandas as gpd
 
+import pyarrow as pa
+import pyarrow.orc as orc
+
 from glob import glob
 from fastkml import kml
 from shapely.geometry import mapping
