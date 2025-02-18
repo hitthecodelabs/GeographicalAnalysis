@@ -35,3 +35,6 @@ if __name__ == "__main__":
     
     args = parser.parse_args()
     benchmark_spatial_query(args.target_file, args.reference_file, use_parquet=args.parquet)
+
+### python benchmark_parquet_vs_kml_geojson.py target.kml reference.geojson
+### python benchmark_parquet_vs_kml_geojson.py target.kml reference.parquet --parquet
