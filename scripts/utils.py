@@ -141,8 +141,18 @@ def convert_to_parquet(input_file):
     gdf.to_parquet(output_file, compression='snappy')
     print(f"Converted {input_file} to {output_file}")
 
-# Benchmark Load Time and Query Time
 def benchmark_spatial_query(target_file, reference_file, use_parquet=False):
+    """
+    Benchmark the load time and spatial query performance for KML/GeoJSON vs Parquet files.
+    
+    Parameters:
+    target_file (str): Path to the target polygon KML or GeoJSON file.
+    reference_file (str): Path to the reference polygons file (KML, GeoJSON, or Parquet).
+    use_parquet (bool): If True, reads the reference file as a Parquet file; otherwise, reads it as KML/GeoJSON.
+    
+    Returns:
+    None: Prints the load time, query time, and the number of intersecting polygons.
+    """
     target_gdf = gpd.read_file(target_file)
     target_geom = target_gdf.unary_union
     
@@ -160,3 +170,4 @@ def benchmark_spatial_query(target_file, reference_file, use_parquet=False):
     print(f"Load Time ({'Parquet' if use_parquet else 'KML/GeoJSON'}): {load_time:.4f} sec")
     print(f"Query Time ({'Parquet' if use_parquet else 'KML/GeoJSON'}): {query_time:.4f} sec")
     print(f"Intersecting Polygons: {len(intersecting_polygons)}")
+
