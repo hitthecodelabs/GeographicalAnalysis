@@ -125,3 +125,38 @@ def gdf_to_kml(gdf, output_kml):
         f.write(k.to_string(prettyprint=True))
     
     print(f"KML file saved: {output_kml}")
+
+def convert_to_parquet(input_file):
+    """
+    Convert a KML or GeoJSON file to a Parquet file.
+    
+    Parameters:
+    input_file (str): Path to the input KML or GeoJSON file.
+    
+    Returns:
+    None: Saves the output as a Parquet file in the same directory as the input file.
+    """
+    output_file = input_file.replace(".kml", ".parquet").replace(".geojson", ".parquet")
+    gdf = gpd.read_file(input_file)
+    gdf.to_parquet(output_file, compression='snappy')
+    print(f"Converted {input_file} to {output_file}")
+
+# Benchmark Load Time and Query Time
+def benchmark_spatial_query(target_file, reference_file, use_parquet=False):
+    target_gdf = gpd.read_file(target_file)
+    target_geom = target_gdf.unary_union
+    
+    start_time = time.time()
+    if use_parquet:
+        reference_gdf = gpd.read_parquet(reference_file)
+    else:
+        reference_gdf = gpd.read_file(reference_file)
+    load_time = time.time() - start_time
+    
+    start_query = time.time()
+    intersecting_polygons = reference_gdf[reference_gdf.intersects(target_geom)]
+    query_time = time.time() - start_query
+    
+    print(f"Load Time ({'Parquet' if use_parquet else 'KML/GeoJSON'}): {load_time:.4f} sec")
+    print(f"Query Time ({'Parquet' if use_parquet else 'KML/GeoJSON'}): {query_time:.4f} sec")
+    print(f"Intersecting Polygons: {len(intersecting_polygons)}")
