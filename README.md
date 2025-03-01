@@ -37,7 +37,7 @@ Clone the repository and install the required dependencies:
 
 ```bash
 git clone https://github.com/hitthecodelabs/Geospatial-Data-Analysis.git
-cd GeographicalAnalysis
+cd Geospatial-Data-Analysis
 pip install -r requirements.txt
 ```
 
