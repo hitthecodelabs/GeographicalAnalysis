@@ -59,7 +59,13 @@ def calculate_scale(ax, fig_width_inches=25, fig_height_inches=22):
     return final_scale
 
 utm_coords = [
-    (5.0, 98.0),
+    (557663.0, 9847241.0),
+    (557694.0, 9847228.0),
+    (557643.0, 9847142.0),
+    (557613.0, 9847172.0),
+    (557633.0, 9847187.0),
+    (557655.0, 9847223.0),
+    (557663.0, 9847241.0)
 ]
 
 distances = []
@@ -110,16 +116,16 @@ custom_xticks = np.arange(x_centered_min + 30, x_centered_max - 30 + 1, 30)
 custom_yticks = np.arange(y_centered_min + 30, y_centered_max - 30 + 1, 30)
 ax.set_xticks(custom_xticks)
 ax.set_yticks(custom_yticks)
-ax.set_xticklabels([f"{tick}" for tick in custom_xticks], fontsize=15)
-ax.set_yticklabels([f"{tick}" for tick in custom_yticks], rotation=90, fontsize=15)
+ax.set_xticklabels([f"{int(tick)}" for tick in custom_xticks], fontsize=15)
+ax.set_yticklabels([f"{int(tick)}" for tick in custom_yticks], rotation=90, fontsize=15)
 
 ax2, ax3 = ax.twiny(), ax.twinx()
 ax2.set_xlim(ax.get_xlim())
 ax3.set_ylim(ax.get_ylim())
 ax2.set_xticks(custom_xticks)
 ax3.set_yticks(custom_yticks)
-ax2.set_xticklabels([f"{tick}" for tick in custom_xticks], fontsize=15)
-ax3.set_yticklabels([f"{tick}" for tick in custom_yticks], rotation=270, fontsize=15)
+ax2.set_xticklabels([f"{int(tick)}" for tick in custom_xticks], fontsize=15)
+ax3.set_yticklabels([f"{int(tick)}" for tick in custom_yticks], rotation=270, fontsize=15)
 
 ax.grid(True, which='major', linestyle='--', linewidth=0.5)
 ax2.grid(True, which='major', linestyle='--', linewidth=0.5)
