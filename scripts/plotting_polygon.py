@@ -38,7 +38,7 @@ def calculate_scale(utm_x, utm_y, paper_size="A1", target_aspect_ratio=25/22):
     return final_scale
 
 utm_coords = [
-    (5.0, 94.0),
+    (5.0, 98.0),
 ]
 
 distances = []
@@ -62,7 +62,7 @@ for i in range(len(utm_coords) - 1):
     dy = point2[1] - point1[1]
     rotation_degrees = np.degrees(np.arctan2(dy, dx))
     rotation_degrees += -7.5 if (0 <= rotation_degrees < 90) or (-180 <= rotation_degrees < -90) else 7.5
-    offset_pixels = 10
+    offset_pixels = 20
     offset_x_pixels = offset_pixels * math.cos(math.radians(rotation_degrees + 90))
     offset_y_pixels = offset_pixels * math.sin(math.radians(rotation_degrees + 90))
     ax.annotate(f"{distances[i]:.2f} m", xy=(mid_x, mid_y), xytext=(offset_x_pixels, offset_y_pixels), textcoords='offset points', ha='center', va='center', rotation=rotation_degrees, fontsize=15, color='black')
@@ -82,8 +82,8 @@ ax.set_xlim(x_centered_min, x_centered_max)
 ax.set_ylim(y_centered_min, y_centered_max)
 
 num_grid_lines = 7  # Adjusted to maintain proper spacing
-custom_xticks = np.arange(x_centered_min, x_centered_max + 1, 30)
-custom_yticks = np.arange(y_centered_min, y_centered_max + 1, 30)
+custom_xticks = np.arange(x_centered_min + 30, x_centered_max - 30 + 1, 30)
+custom_yticks = np.arange(y_centered_min + 30, y_centered_max - 30 + 1, 30)
 ax.set_xticks(custom_xticks)
 ax.set_yticks(custom_yticks)
 ax.set_xticklabels([f"{tick}" for tick in custom_xticks], fontsize=15)
