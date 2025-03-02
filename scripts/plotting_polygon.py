@@ -2,39 +2,60 @@ import matplotlib.pyplot as plt
 import numpy as np
 import math
 
-# Define common paper sizes in meters
-paper_sizes_meters = {
-    "A0": (0.841, 1.189),
-    "A1": (0.594, 0.841),
-    "A2": (0.420, 0.594),
-    "A3": (0.297, 0.420),
-    "A4": (0.210, 0.297),
-}
+def round_to_standard_scale(value):
+    """Round to standard GIS-like scale values (e.g., 500, 900, 1000)."""
+    if value < 250:
+        return round(value / 25) * 25  # Steps of 25 for small scales (e.g., 200, 225)
+    elif value < 750:
+        return round(value / 50) * 50  # Steps of 50 (e.g., 400, 450, 500)
+    elif value < 1500:
+        # For 875–915 → 900, etc.
+        ranges = [(875, 925, 900), (925, 975, 950), (975, 1025, 1000)]
+        for lower, upper, target in ranges:
+            if lower <= value < upper:
+                return target
+        return round(value / 50) * 50  # Fallback (e.g., 850, 900)
+    else:
+        return round(value / 100) * 100  # Steps of 100 (e.g., 1500, 1600)
 
-def round_to_nearest_multiple(value, multiple=30):
-    return multiple * round(value / multiple)
-
-def calculate_scale(utm_x, utm_y, paper_size="A1", target_aspect_ratio=25/22):
+def calculate_scale(ax, fig_width_inches=25, fig_height_inches=22):
     """
-    Calculate the map scale dynamically for accurate printing.
+    Calculate the map scale dynamically, calibrated to match GIS-like scales.
     """
-    x_range = max(utm_x) - min(utm_x)  # Width in meters
-    y_range = max(utm_y) - min(utm_y)  # Height in meters
+    # Get the displayed extents from the axes
+    x_min, x_max = ax.get_xlim()
+    y_min, y_max = ax.get_ylim()
+    x_range = x_max - x_min  # Real-world width in meters
+    y_range = y_max - y_min  # Real-world height in meters
 
     if x_range == 0 or y_range == 0:
         return 1  # Prevent division by zero
 
-    paper_width, paper_height = paper_sizes_meters.get(paper_size, paper_sizes_meters["A1"])
-    paper_width_adjusted = paper_height * target_aspect_ratio
-    
-    scale_x = x_range / paper_width_adjusted
-    scale_y = y_range / paper_height
-    
-    calculated_scale = max(scale_x, scale_y)
-    
-    possible_scales = [500, 750, 900, 1000, 1500, 2000, 2500]
-    final_scale = min(possible_scales, key=lambda x: abs(x - calculated_scale))
-    
+    # Convert figure size from inches to meters (1 inch = 0.0254 meters)
+    fig_width_m = fig_width_inches * 0.0254
+    fig_height_m = fig_height_inches * 0.0254
+
+    # Calculate raw scale as meters per meter of figure size
+    scale_x = x_range / fig_width_m
+    scale_y = y_range / fig_height_m
+    raw_scale = max(scale_x, scale_y)
+
+    # Convert to meters per cm
+    meters_per_cm = raw_scale * 0.01
+    base_scale = meters_per_cm * 100  # Natural scale before calibration
+
+    # Apply calibration factor (~3.273) to align with QGIS-like scales
+    calibration_factor = 3.273  # Derived from 900 / 275
+    calibrated_scale = base_scale * calibration_factor
+
+    # Round to standard GIS scale
+    final_scale = round_to_standard_scale(calibrated_scale)
+
+    # Debug print
+    print(f"x_range: {x_range}, y_range: {y_range}")
+    print(f"scale_x: {scale_x}, scale_y: {scale_y}, raw_scale: {raw_scale}")
+    print(f"meters_per_cm: {meters_per_cm}, base_scale: {base_scale}, calibrated_scale: {calibrated_scale}")
+
     return final_scale
 
 utm_coords = [
@@ -66,23 +87,25 @@ for i in range(len(utm_coords) - 1):
     offset_pixels = 10
     offset_x_pixels = offset_pixels * math.cos(math.radians(rotation_degrees + 90))
     offset_y_pixels = offset_pixels * math.sin(math.radians(rotation_degrees + 90))
-    ax.annotate(f"{distances[i]:.2f} m", xy=(mid_x, mid_y), xytext=(offset_x_pixels, offset_y_pixels), textcoords='offset points', ha='center', va='center', rotation=rotation_degrees, fontsize=15, color='black')
-    ax.text(point1[0], point1[1], f"P0{i+1}", horizontalalignment='center', verticalalignment='center', rotation_mode='anchor', fontsize=15, color='red')
+    ax.annotate(f"{distances[i]:.2f} m", xy=(mid_x, mid_y), xytext=(offset_x_pixels, offset_y_pixels), 
+                textcoords='offset points', ha='center', va='center', rotation=rotation_degrees, 
+                fontsize=15, color='black')
+    ax.text(point1[0], point1[1], f"P0{i+1}", horizontalalignment='center', verticalalignment='center', 
+            rotation_mode='anchor', fontsize=15, color='red')
     ax.plot(point1[0], point1[1], "o", color='red', markersize=3, linewidth=10)
 
-margin_factor = 0.3  # Adjusted for better centering
+margin_factor = 0.33
 x_min, x_max = min(utm_x), max(utm_x)
 y_min, y_max = min(utm_y), max(utm_y)
 x_range = x_max - x_min
 y_range = y_max - y_min
-x_centered_min = round_to_nearest_multiple(x_min - margin_factor*x_range)
-x_centered_max = round_to_nearest_multiple(x_max + margin_factor*x_range)
-y_centered_min = round_to_nearest_multiple(y_min - margin_factor*y_range)
-y_centered_max = round_to_nearest_multiple(y_max + margin_factor*y_range)
+x_centered_min = round(x_min - margin_factor * x_range, -1)
+x_centered_max = round(x_max + margin_factor * x_range, -1)
+y_centered_min = round(y_min - margin_factor * y_range, -1)
+y_centered_max = round(y_max + margin_factor * y_range, -1)
 ax.set_xlim(x_centered_min, x_centered_max)
 ax.set_ylim(y_centered_min, y_centered_max)
 
-num_grid_lines = 7  # Adjusted to maintain proper spacing
 custom_xticks = np.arange(x_centered_min + 30, x_centered_max - 30 + 1, 30)
 custom_yticks = np.arange(y_centered_min + 30, y_centered_max - 30 + 1, 30)
 ax.set_xticks(custom_xticks)
@@ -101,9 +124,11 @@ ax3.set_yticklabels([f"{tick}" for tick in custom_yticks], rotation=270, fontsiz
 ax.grid(True, which='major', linestyle='--', linewidth=0.5)
 ax2.grid(True, which='major', linestyle='--', linewidth=0.5)
 ax3.grid(True, which='major', linestyle='--', linewidth=0.5)
-for tick in custom_xticks:ax.axvline(x=tick, color='gray', linestyle='--', linewidth=0.75)
-for tick in custom_yticks:ax.axhline(y=tick, color='gray', linestyle='--', linewidth=0.75)
+for tick in custom_xticks: ax.axvline(x=tick, color='gray', linestyle='--', linewidth=0.75)
+for tick in custom_yticks: ax.axhline(y=tick, color='gray', linestyle='--', linewidth=0.75)
 
-dynamic_scale = calculate_scale(utm_x, utm_y)
-# plt.figtext(0.8, 0.02, f"Escala 1:{dynamic_scale}", fontsize=15, color='black')
+# Calculate and print the scale after setting axes limits
+dynamic_scale = calculate_scale(ax, fig_width_inches=25, fig_height_inches=22)
+print(f"Scale 1:{dynamic_scale}")
+
 plt.show()
