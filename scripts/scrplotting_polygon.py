@@ -3,8 +3,7 @@ import numpy as np
 import math
 
 utm_coords = [
-    (0.0, 0.0),
-    ...
+    (543215.0, 9876543.0),
 ]
 
 distances = []
@@ -89,37 +88,23 @@ y_range = y_max - y_min
 ax.set_xlim(x_min - margin_factor*x_range, x_max + margin_factor*x_range)
 ax.set_ylim(y_min - margin_factor*y_range, y_max + margin_factor*y_range)
 
-ax.minorticks_on()
+# Define the number of grid lines
+num_grid_lines = 6  # Adjust this based on the printed version
 
+# Generate custom tick positions
 x_lim = ax.get_xlim()
 y_lim = ax.get_ylim()
-custom_xticks = np.linspace(x_lim[0], x_lim[1], 4)
-custom_yticks = np.linspace(y_lim[0], y_lim[1], 4)
+custom_xticks = np.linspace(x_lim[0], x_lim[1], num_grid_lines)
+custom_yticks = np.linspace(y_lim[0], y_lim[1], num_grid_lines)
+
+# Set the new tick positions
 ax.set_xticks(custom_xticks)
-ax.set_xticklabels([f"{tick:.4f}" for tick in custom_xticks])
-
-ax2 = ax.twiny()
-ax2.minorticks_on()
-ax2.set_xlim(ax.get_xlim())
-ax2.set_xticks(custom_xticks)
-ax2.set_xticklabels([f"{tick:.4f}" for tick in custom_xticks])
-
-ax3 = ax.twinx()
-ax3.minorticks_on()
-ax3.set_ylim(ax.get_ylim())
-ax3.set_yticks(custom_yticks)
-ax3.set_yticklabels([f"{tick:.4f}" for tick in custom_yticks])
-
 ax.set_yticks(custom_yticks)
-ax.set_yticklabels([f"{tick:.4f}" for tick in custom_yticks])
+ax.set_xticklabels([f"{tick:.0f}" for tick in custom_xticks])
+ax.set_yticklabels([f"{tick:.0f}" for tick in custom_yticks], rotation=90)
 
-for label in ax.get_yticklabels():
-    label.set_rotation(90)
-    label.set_ha('right')
-
-for label in ax3.get_yticklabels():
-    label.set_rotation(90)
-    label.set_ha('left')
+# Enable minor ticks
+ax.minorticks_on()
 
 plt.grid()
 plt.show()
