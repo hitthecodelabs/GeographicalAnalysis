@@ -88,14 +88,18 @@ num_grid_lines = 6  # Adjust this based on the printed version
 # Generate custom tick positions
 x_lim = ax.get_xlim()
 y_lim = ax.get_ylim()
-custom_xticks = np.linspace(x_lim[0], x_lim[1], num_grid_lines)
-custom_yticks = np.linspace(y_lim[0], y_lim[1], num_grid_lines)
+custom_xticks = np.linspace(x_lim[0], x_lim[1], num_grid_lines, dtype=int)
+custom_yticks = np.linspace(y_lim[0], y_lim[1], num_grid_lines, dtype=int)
+
+# Filter out unnecessary tick marks
+custom_xticks = [tick for tick in custom_xticks if x_min <= tick <= x_max]
+custom_yticks = [tick for tick in custom_yticks if y_min <= tick <= y_max]
 
 # Set the new tick positions
 ax.set_xticks(custom_xticks)
 ax.set_yticks(custom_yticks)
-ax.set_xticklabels([f"{tick:.0f}" for tick in custom_xticks], fontsize=15)
-ax.set_yticklabels([f"{tick:.0f}" for tick in custom_yticks], rotation=90, fontsize=15)
+ax.set_xticklabels([f"{tick}" for tick in custom_xticks], fontsize=15)
+ax.set_yticklabels([f"{tick}" for tick in custom_yticks], rotation=90, fontsize=15)
 
 # Create twin axes for the top and right ticks
 ax2 = ax.twiny()
@@ -106,8 +110,8 @@ ax2.set_xlim(ax.get_xlim())
 ax3.set_ylim(ax.get_ylim())
 ax2.set_xticks(custom_xticks)
 ax3.set_yticks(custom_yticks)
-ax2.set_xticklabels([f"{tick:.0f}" for tick in custom_xticks], fontsize=15)
-ax3.set_yticklabels([f"{tick:.0f}" for tick in custom_yticks], rotation=270, fontsize=15)
+ax2.set_xticklabels([f"{tick}" for tick in custom_xticks], fontsize=15)
+ax3.set_yticklabels([f"{tick}" for tick in custom_yticks], rotation=270, fontsize=15)
 
 # Enable grid lines that align with the tick marks
 ax.grid(True, which='major', linestyle='--', linewidth=0.5)
