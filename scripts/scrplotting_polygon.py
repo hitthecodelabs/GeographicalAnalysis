@@ -3,7 +3,7 @@ import numpy as np
 import math
 
 utm_coords = [
-    (543215.0, 9876543.0),
+    (5.0, 98.0),
 ]
 
 distances = []
@@ -43,20 +43,15 @@ for i in range(len(utm_coords) - 1):
     rotation_degrees = np.degrees(np.arctan2(dy, dx))
 
     # Correct adjustment based on the quadrant, considering negative angles
-    print(f"Before Adjustment: {rotation_degrees:.2f} degrees")
-
     if (0 <= rotation_degrees < 90) or (-180 <= rotation_degrees < -90):  # First & Third Quadrants
         rotation_degrees -= 7.5
     else:  # Second & Fourth Quadrants (90 to 180, -90 to 0)
         rotation_degrees += 7.5
 
-    print(f"After Adjustment: {rotation_degrees:.2f} degrees")
-
     offset_pixels = 10
     offset_x_pixels = offset_pixels * math.cos(math.radians(rotation_degrees + 90))
     offset_y_pixels = offset_pixels * math.sin(math.radians(rotation_degrees + 90))
 
-    print(f"{distances[i]:.2f} m")
     ax.annotate(
         f"{distances[i]:.2f} m",
         xy=(mid_x, mid_y),
@@ -76,7 +71,6 @@ for i in range(len(utm_coords) - 1):
             fontsize=15,
             color='red')
     ax.plot(point1[0], point1[1], "o", color='red', markersize=3, linewidth=10)
-    print()
 
 # Zoom out by adding margins
 margin_factor = 0.25
@@ -103,8 +97,27 @@ ax.set_yticks(custom_yticks)
 ax.set_xticklabels([f"{tick:.0f}" for tick in custom_xticks])
 ax.set_yticklabels([f"{tick:.0f}" for tick in custom_yticks], rotation=90)
 
-# Enable minor ticks
-ax.minorticks_on()
+# Create twin axes for the top and right ticks
+ax2 = ax.twiny()
+ax3 = ax.twinx()
 
-plt.grid()
+# Set ticks and labels on top and right
+ax2.set_xlim(ax.get_xlim())
+ax3.set_ylim(ax.get_ylim())
+ax2.set_xticks(custom_xticks)
+ax3.set_yticks(custom_yticks)
+ax2.set_xticklabels([f"{tick:.0f}" for tick in custom_xticks])
+ax3.set_yticklabels([f"{tick:.0f}" for tick in custom_yticks], rotation=90)
+
+# Enable grid lines that align with the tick marks
+ax.grid(True, which='major', linestyle='--', linewidth=0.5)
+ax2.grid(True, which='major', linestyle='--', linewidth=0.5)
+ax3.grid(True, which='major', linestyle='--', linewidth=0.5)
+
+# Ensure the grid lines are shown along both x and y axes
+for tick in custom_xticks:
+    ax.axvline(x=tick, color='gray', linestyle='--', linewidth=0.5)
+for tick in custom_yticks:
+    ax.axhline(y=tick, color='gray', linestyle='--', linewidth=0.5)
+
 plt.show()
