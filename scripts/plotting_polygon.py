@@ -38,7 +38,7 @@ def calculate_scale(utm_x, utm_y, paper_size="A1", target_aspect_ratio=25/22):
     return final_scale
 
 utm_coords = [
-    (5.0, 98.0)
+    (5.0, 94.0),
 ]
 
 distances = []
@@ -69,20 +69,21 @@ for i in range(len(utm_coords) - 1):
     ax.text(point1[0], point1[1], f"P0{i+1}", horizontalalignment='center', verticalalignment='center', rotation_mode='anchor', fontsize=15, color='red')
     ax.plot(point1[0], point1[1], "o", color='red', markersize=3, linewidth=10)
 
-margin_factor = 0.25
+margin_factor = 0.3  # Adjusted for better centering
 x_min, x_max = min(utm_x), max(utm_x)
 y_min, y_max = min(utm_y), max(utm_y)
 x_range = x_max - x_min
 y_range = y_max - y_min
-ax.set_xlim(round_to_nearest_multiple(x_min - margin_factor*x_range), round_to_nearest_multiple(x_max + margin_factor*x_range))
-ax.set_ylim(round_to_nearest_multiple(y_min - margin_factor*y_range), round_to_nearest_multiple(y_max + margin_factor*y_range))
+x_centered_min = round_to_nearest_multiple(x_min - margin_factor*x_range)
+x_centered_max = round_to_nearest_multiple(x_max + margin_factor*x_range)
+y_centered_min = round_to_nearest_multiple(y_min - margin_factor*y_range)
+y_centered_max = round_to_nearest_multiple(y_max + margin_factor*y_range)
+ax.set_xlim(x_centered_min, x_centered_max)
+ax.set_ylim(y_centered_min, y_centered_max)
 
-num_grid_lines = 6  # Adjust based on printed version
-x_lim, y_lim = ax.get_xlim(), ax.get_ylim()
-custom_xticks = np.linspace(x_lim[0], x_lim[1], num_grid_lines, dtype=int)
-custom_yticks = np.linspace(y_lim[0], y_lim[1], num_grid_lines, dtype=int)
-custom_xticks = [round_to_nearest_multiple(tick) for tick in custom_xticks]
-custom_yticks = [round_to_nearest_multiple(tick) for tick in custom_yticks]
+num_grid_lines = 7  # Adjusted to maintain proper spacing
+custom_xticks = np.arange(x_centered_min, x_centered_max + 1, 30)
+custom_yticks = np.arange(y_centered_min, y_centered_max + 1, 30)
 ax.set_xticks(custom_xticks)
 ax.set_yticks(custom_yticks)
 ax.set_xticklabels([f"{tick}" for tick in custom_xticks], fontsize=15)
