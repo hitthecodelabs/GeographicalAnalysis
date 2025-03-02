@@ -51,7 +51,8 @@ for i in range(len(utm_coords) - 1):
 utm_x, utm_y = zip(*utm_coords)
 
 fig, ax = plt.subplots(figsize=(25, 22))
-ax.plot(utm_x, utm_y, 'ko-', markersize=0, linewidth=1, label="Path (UTM)")
+
+ax.plot(utm_x, utm_y, 'ko-', markersize=0, linewidth=2, label="Path (UTM)")
 
 for i in range(len(utm_coords) - 1):
     point1 = utm_coords[i]
@@ -100,10 +101,8 @@ ax3.set_yticklabels([f"{tick}" for tick in custom_yticks], rotation=270, fontsiz
 ax.grid(True, which='major', linestyle='--', linewidth=0.5)
 ax2.grid(True, which='major', linestyle='--', linewidth=0.5)
 ax3.grid(True, which='major', linestyle='--', linewidth=0.5)
-for tick in custom_xticks:
-    ax.axvline(x=tick, color='gray', linestyle='--', linewidth=0.5)
-for tick in custom_yticks:
-    ax.axhline(y=tick, color='gray', linestyle='--', linewidth=0.5)
+for tick in custom_xticks:ax.axvline(x=tick, color='gray', linestyle='--', linewidth=0.75)
+for tick in custom_yticks:ax.axhline(y=tick, color='gray', linestyle='--', linewidth=0.75)
 
 dynamic_scale = calculate_scale(utm_x, utm_y)
 # plt.figtext(0.8, 0.02, f"Escala 1:{dynamic_scale}", fontsize=15, color='black')
