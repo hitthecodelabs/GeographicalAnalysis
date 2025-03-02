@@ -61,8 +61,8 @@ for i in range(len(utm_coords) - 1):
     dx = point2[0] - point1[0]
     dy = point2[1] - point1[1]
     rotation_degrees = np.degrees(np.arctan2(dy, dx))
-    rotation_degrees += -7.5 if (0 <= rotation_degrees < 90) or (-180 <= rotation_degrees < -90) else 7.5
-    offset_pixels = 20
+    rotation_degrees += -5 if (0 <= rotation_degrees < 90) or (-180 <= rotation_degrees < -90) else 5
+    offset_pixels = 10
     offset_x_pixels = offset_pixels * math.cos(math.radians(rotation_degrees + 90))
     offset_y_pixels = offset_pixels * math.sin(math.radians(rotation_degrees + 90))
     ax.annotate(f"{distances[i]:.2f} m", xy=(mid_x, mid_y), xytext=(offset_x_pixels, offset_y_pixels), textcoords='offset points', ha='center', va='center', rotation=rotation_degrees, fontsize=15, color='black')
