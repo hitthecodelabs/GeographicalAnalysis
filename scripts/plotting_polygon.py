@@ -22,36 +22,25 @@ def calculate_scale(ax, fig_width_inches=25, fig_height_inches=22):
     """
     Calculate the map scale dynamically, calibrated to match GIS-like scales.
     """
-    # Get the displayed extents from the axes
     x_min, x_max = ax.get_xlim()
     y_min, y_max = ax.get_ylim()
-    x_range = x_max - x_min  # Real-world width in meters
-    y_range = y_max - y_min  # Real-world height in meters
+    x_range = x_max - x_min
+    y_range = y_max - y_min
 
     if x_range == 0 or y_range == 0:
-        return 1  # Prevent division by zero
+        return 1
 
-    # Convert figure size from inches to meters (1 inch = 0.0254 meters)
     fig_width_m = fig_width_inches * 0.0254
     fig_height_m = fig_height_inches * 0.0254
-
-    # Calculate raw scale as meters per meter of figure size
     scale_x = x_range / fig_width_m
     scale_y = y_range / fig_height_m
     raw_scale = max(scale_x, scale_y)
-
-    # Convert to meters per cm
     meters_per_cm = raw_scale * 0.01
-    base_scale = meters_per_cm * 100  # Natural scale before calibration
-
-    # Apply calibration factor (~3.273) to align with QGIS-like scales
-    calibration_factor = 3.273  # Derived from 900 / 275
+    base_scale = meters_per_cm * 100
+    calibration_factor = 3.273
     calibrated_scale = base_scale * calibration_factor
-
-    # Round to standard GIS scale
     final_scale = round_to_standard_scale(calibrated_scale)
 
-    # Debug print
     print(f"x_range: {x_range}, y_range: {y_range}")
     print(f"scale_x: {scale_x}, scale_y: {scale_y}, raw_scale: {raw_scale}")
     print(f"meters_per_cm: {meters_per_cm}, base_scale: {base_scale}, calibrated_scale: {calibrated_scale}")
@@ -79,6 +68,12 @@ utm_x, utm_y = zip(*utm_coords)
 
 fig, ax = plt.subplots(figsize=(25, 22))
 
+# Calculate ranges before plotting
+x_min, x_max = min(utm_x), max(utm_x)
+y_min, y_max = min(utm_y), max(utm_y)
+x_range = x_max - x_min
+y_range = y_max - y_min
+
 ax.plot(utm_x, utm_y, 'ko-', markersize=0, linewidth=2, label="Path (UTM)")
 
 for i in range(len(utm_coords) - 1):
@@ -88,23 +83,27 @@ for i in range(len(utm_coords) - 1):
     mid_y = (point1[1] + point2[1]) / 2
     dx = point2[0] - point1[0]
     dy = point2[1] - point1[1]
+
+    degrees = 8.50
     rotation_degrees = np.degrees(np.arctan2(dy, dx))
-    rotation_degrees += -5 if (0 <= rotation_degrees < 90) or (-180 <= rotation_degrees < -90) else 5
+    rotation_degrees += -degrees if (0 <= rotation_degrees < 90) or (-180 <= rotation_degrees < -90) else degrees
     offset_pixels = 10
     offset_x_pixels = offset_pixels * math.cos(math.radians(rotation_degrees + 90))
     offset_y_pixels = offset_pixels * math.sin(math.radians(rotation_degrees + 90))
+    
     ax.annotate(f"{distances[i]:.2f} m", xy=(mid_x, mid_y), xytext=(offset_x_pixels, offset_y_pixels), 
                 textcoords='offset points', ha='center', va='center', rotation=rotation_degrees, 
                 fontsize=15, color='black')
-    ax.text(point1[0], point1[1], f"P0{i+1}", horizontalalignment='center', verticalalignment='center', 
-            rotation_mode='anchor', fontsize=15, color='red')
-    ax.plot(point1[0], point1[1], "o", color='red', markersize=3, linewidth=10)
+    
+    # Add proportional offset to move text above the point
+    offset_fraction = 0.005  # Adjust this value (e.g., 0.002 to 0.01) for more/less offset
+    text_offset = y_range * offset_fraction
+    ax.text(point1[0], point1[1] + text_offset, f"P0{i+1}", 
+            horizontalalignment='center', verticalalignment='bottom', 
+            rotation_mode='anchor', fontsize=15, color='black')
+    ax.plot(point1[0], point1[1], "o", color='black', markersize=5, linewidth=10)
 
 margin_factor = 0.33
-x_min, x_max = min(utm_x), max(utm_x)
-y_min, y_max = min(utm_y), max(utm_y)
-x_range = x_max - x_min
-y_range = y_max - y_min
 x_centered_min = round(x_min - margin_factor * x_range, -1)
 x_centered_max = round(x_max + margin_factor * x_range, -1)
 y_centered_min = round(y_min - margin_factor * y_range, -1)
@@ -133,7 +132,6 @@ ax3.grid(True, which='major', linestyle='--', linewidth=0.5)
 for tick in custom_xticks: ax.axvline(x=tick, color='gray', linestyle='--', linewidth=0.75)
 for tick in custom_yticks: ax.axhline(y=tick, color='gray', linestyle='--', linewidth=0.75)
 
-# Calculate and print the scale after setting axes limits
 dynamic_scale = calculate_scale(ax, fig_width_inches=25, fig_height_inches=22)
 print(f"Scale 1:{dynamic_scale}")
 
